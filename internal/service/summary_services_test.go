@@ -11,12 +11,11 @@ import (
 	"go.uber.org/zap"
 )
 func init() {
-	// Initialize zap logger to avoid nil pointer panics
+
 	logger, _ := zap.NewDevelopment()
 	zap.ReplaceGlobals(logger)
 }
 
-// -------------------- Mock Implementations --------------------
 type mockRepo struct {
 	mock.Mock
 }
