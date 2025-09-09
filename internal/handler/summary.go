@@ -116,7 +116,7 @@ func (h *summaryHandlerImpl) GetSummaries(c *fiber.Ctx) error {
 	}
 
 	logger.Log.Info("GetSummaries succeeded", zap.Int("count", len(summaries)))
-	return c.JSON(summaries)
+	return c.Status(fiber.StatusOK).JSON(summaries)
 }
 
 
@@ -146,5 +146,5 @@ func (h *summaryHandlerImpl) GetSummaryByID(c *fiber.Ctx) error {
 	}
 
 	logger.Log.Info("GetSummaryByID succeeded", zap.String("id", summary.ID))
-	return c.JSON(summary)
+	return c.Status(fiber.StatusOK).JSON(summary)
 }

@@ -8,7 +8,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// SummaryRepository interface
 type SummaryRepository interface {
 	SaveSummary(summary *domain.Summary) error
 	GetSummaries(page, pageSize int) ([]domain.Summary, error)
@@ -54,7 +53,7 @@ func (r *summaryRepo) GetSummaries(page, pageSize int) ([]domain.Summary, error)
     var summaries []domain.Summary
     offset := (page - 1) * pageSize
 
-    // Preload Schemas and their Tables
+    
     err := dB.
         Preload("Schemas.Tables").
         Limit(pageSize).
