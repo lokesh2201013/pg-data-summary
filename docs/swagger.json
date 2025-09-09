@@ -1,0 +1,238 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/summary/summaries": {
+            "get": {
+                "description": "Retrieves paginated summaries",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "summary"
+                ],
+                "summary": "Get all summaries",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page size",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.Summary"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/summary/summaries/{id}": {
+            "get": {
+                "description": "Retrieves full summary by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "summary"
+                ],
+                "summary": "Get summary by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Summary ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Summary"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/summary/sync": {
+            "post": {
+                "description": "Connects to remote PostgreSQL via external API and saves summary",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "summary"
+                ],
+                "summary": "Sync a new database summary",
+                "parameters": [
+                    {
+                        "description": "Remote DB connection",
+                        "name": "details",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ConnectionDetails"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Summary"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "domain.ConnectionDetails": {
+            "type": "object",
+            "properties": {
+                "dbname": {
+                    "type": "string"
+                },
+                "host": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "integer"
+                },
+                "user": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.Schema": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "summary_id": {
+                    "type": "string"
+                },
+                "synced_at": {
+                    "type": "string"
+                },
+                "tables": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Table"
+                    }
+                }
+            }
+        },
+        "domain.Summary": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "schemas": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Schema"
+                    }
+                },
+                "source_info": {
+                    "$ref": "#/definitions/domain.ConnectionDetails"
+                },
+                "synced_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.Table": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "row_count": {
+                    "type": "integer"
+                },
+                "schema_id": {
+                    "type": "string"
+                },
+                "size_mb": {
+                    "type": "number"
+                }
+            }
+        }
+    }
+}
