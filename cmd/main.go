@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	//"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/joho/godotenv"
+	"time"
     fiberSwagger "github.com/swaggo/fiber-swagger"
     _ "github.com/lokesh2201013/postgres-data-summary/docs" 
 	"github.com/lokesh2201013/postgres-data-summary/internal/handler"
@@ -21,13 +22,13 @@ func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found")
 	}
-
+    time.Sleep(5*time.Second)
 	local.ConnectDB()
 
 	repo := local.NewSummaryRepository()
 
 	client := external.NewSummaryClient()
-	summarySvc := service.NewSummaryService(repo, client)
+	summarySvc := service.NewSummaryService(repo, client,1,2*time.Second)
 	h := handler.NewSummaryHandler(summarySvc)
 
 	app := fiber.New()

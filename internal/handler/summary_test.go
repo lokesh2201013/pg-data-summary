@@ -12,16 +12,30 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 
+	//"io"
 	"github.com/lokesh2201013/postgres-data-summary/internal/domain"
 	"github.com/lokesh2201013/postgres-data-summary/internal/handler"
+	"github.com/lokesh2201013/postgres-data-summary/internal/logger"
 )
 
-// ---- Mock Service ----
 type mockSummaryService struct {
 	mock.Mock
 }
 
+
+func init() {
+
+    var buf bytes.Buffer
+    core := zapcore.NewCore(
+        zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig()),
+        zapcore.AddSync(&buf),
+        zapcore.InfoLevel,
+    )
+    logger.Log = zap.New(core)
+}
 func (m *mockSummaryService) UpdateSummary(details domain.ConnectionDetails) (*domain.Summary, error) {
 	args := m.Called(details)
 	if args.Get(0) == nil {
@@ -43,8 +57,7 @@ func (m *mockSummaryService) GetSummaryByID(id string) (*domain.Summary, error) 
 	return args.Get(0).(*domain.Summary), args.Error(1)
 }
 
-// ---- Tests ----
-
+// ---- Test Setup ----
 func setupApp(svc *mockSummaryService) *fiber.App {
 	h := handler.NewSummaryHandler(svc)
 	app := fiber.New()
@@ -55,14 +68,15 @@ func setupApp(svc *mockSummaryService) *fiber.App {
 	return app
 }
 
+// ---- Tests ----
 func TestSyncSummary_Success(t *testing.T) {
 	svc := new(mockSummaryService)
 	app := setupApp(svc)
 
+	port := 5432
 	details := domain.ConnectionDetails{
-		Host: "localhost", Port: new(int), User: "test", DBName: "demo",
+		Host: "localhost", Port: &port, User: "test", DBName: "demo",
 	}
-	*details.Port = 5432
 
 	expected := &domain.Summary{
 		ID:       "123",

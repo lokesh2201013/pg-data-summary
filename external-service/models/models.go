@@ -2,9 +2,7 @@ package models
 
 import "time"
 
-// Summary represents a summary sync event
-// It contains source info and sync timestamp
-// plus related schemas and tables
+
 type ConnectionDetails struct {
 	Host     string `json:"host"`
 	Port     *int    `json:"port"`

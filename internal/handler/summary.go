@@ -12,7 +12,7 @@ import (
 	//"github.com/lokesh2201013/postgres-data-summary/internal/repository/external"
 	"github.com/lokesh2201013/postgres-data-summary/internal/domain"
 	"github.com/lokesh2201013/postgres-data-summary/internal/logger"
-	"github.com/lokesh2201013/postgres-data-summary/internal/repository/local"
+	//"github.com/lokesh2201013/postgres-data-summary/internal/repository/local"
 	"github.com/lokesh2201013/postgres-data-summary/internal/service"
 )
 
@@ -71,13 +71,13 @@ func (h *summaryHandlerImpl) SyncSummary(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError, "Failed to sync summary")
 	}
 
-	x := local.NewSummaryRepository()
-	if err := x.SaveSummary(summary); err != nil {
-		logger.Log.Error("SaveSummary failed",
-			zap.Any("summary", summary),
-			zap.Error(err))
-		return fiber.NewError(fiber.StatusInternalServerError, "Failed to save summary")
-	}
+	// x := local.NewSummaryRepository()
+	// if err := x.SaveSummary(summary); err != nil {
+	// 	logger.Log.Error("SaveSummary failed",
+	// 		zap.Any("summary", summary),
+	// 		zap.Error(err))
+	// 	return fiber.NewError(fiber.StatusInternalServerError, "Failed to save summary")
+	// }
 
 	logger.Log.Info("Summary synced successfully", zap.String("id", summary.ID))
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{

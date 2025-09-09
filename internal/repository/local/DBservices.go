@@ -51,11 +51,23 @@ func (r *summaryRepo) SaveSummary(summary *domain.Summary) error {
 
 
 func (r *summaryRepo) GetSummaries(page, pageSize int) ([]domain.Summary, error) {
-	var summaries []domain.Summary
-	offset := (page - 1) * pageSize
-	err := dB.Limit(pageSize).Offset(offset).Find(&summaries).Error
-	return summaries, err
+    var summaries []domain.Summary
+    offset := (page - 1) * pageSize
+
+    // Preload Schemas and their Tables
+    err := dB.
+        Preload("Schemas.Tables").
+        Limit(pageSize).
+        Offset(offset).
+        Find(&summaries).Error
+
+    if err != nil {
+        return nil, err
+    }
+
+    return summaries, nil
 }
+
 
 func (r *summaryRepo) GetSummaryByID(id string) (*domain.Summary, error) {
     var summary domain.Summary
